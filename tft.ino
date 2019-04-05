@@ -30,7 +30,6 @@ function init() {
   writeCommand(0xEF);
   writeData(0x03);
   writeData(0x80);
-  delay(150);
   writeData(0x02);
 
   // 0xCF, 3, 0x00, 0xC1, 0x30,
@@ -157,18 +156,19 @@ function init() {
 
   // ILI9341_SLPOUT  , 0x80,                // Exit Sleep
   writeCommand(0x11);
-  writeData(0x80);
   delay(150);
 
   // ILI9341_DISPON  , 0x80,                // Display on
   writeCommand(0x29);
-  writeData(0x80);
   delay(150);
 
   // 0x00                                   // End of list
   writeCommand(0x00);
 
   digitalWrite(cs, HIGH);
+
+  // Test pixel drawing.
+  drawPixel(100, 100, 0xFB60);
 }
 
 function writeCommand(int data) {
@@ -189,4 +189,24 @@ function writeData(int data) {
     digitalWrite(clock, HIGH);
     digitalWrite(clock, LOW);
   }
+}
+
+function drawPixel(x, y, color) {
+  digitalWrite(cs, LOW);
+
+  // Column address set.
+  writeCommand(0x2A);
+  writeData(x);
+  writeData(x);
+
+  // Row address set.
+  writeCommand(0x2B);
+  writeData(y);
+  writeData(y);
+
+  // RAM write.
+  writeCommand(0x2C);
+  writeData(color);
+
+  digitalWrite(cs, HIGH);
 }
