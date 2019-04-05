@@ -174,8 +174,8 @@ function init() {
 function writeCommand(int data) {
   digitalWrite(dc, LOW);
 
-  for () {
-    digitalWrite(mosi, bit);
+  for (int bit=0; bit<16; bit++) {
+    digitalWrite(mosi, bitRead(data, bit));
     digitalWrite(clock, HIGH);
     digitalWrite(clock, LOW);
   }
@@ -184,14 +184,14 @@ function writeCommand(int data) {
 }
 
 function writeData(int data) {
-  for () {
-    digitalWrite(mosi, bit);
+  ffor (int bit=0; bit<16; bit++) {
+    digitalWrite(mosi, bitRead(data, bit));
     digitalWrite(clock, HIGH);
     digitalWrite(clock, LOW);
   }
 }
 
-function drawPixel(x, y, color) {
+function drawPixel(int x, int y, int color) {
   digitalWrite(cs, LOW);
 
   // Column address set.
