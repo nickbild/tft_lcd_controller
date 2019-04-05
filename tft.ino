@@ -174,7 +174,7 @@ function init() {
 function writeCommand(int data) {
   digitalWrite(dc, LOW);
 
-  for (int bit=0; bit<16; bit++) {
+  for (int bit=15; bit>=0; bit--) {
     digitalWrite(mosi, bitRead(data, bit));
     digitalWrite(clock, HIGH);
     digitalWrite(clock, LOW);
@@ -184,7 +184,7 @@ function writeCommand(int data) {
 }
 
 function writeData(int data) {
-  ffor (int bit=0; bit<16; bit++) {
+  for (int bit=15; bit>=0; bit--) {
     digitalWrite(mosi, bitRead(data, bit));
     digitalWrite(clock, HIGH);
     digitalWrite(clock, LOW);
