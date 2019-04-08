@@ -4,7 +4,7 @@ int mosi = 3;
 int clock = 4;
 int reset = 5;
 
-function init() {
+void setup() {
   pinMode(dc, OUTPUT);
   pinMode(cs, OUTPUT);
   pinMode(mosi, OUTPUT);
@@ -171,7 +171,11 @@ function init() {
   drawPixel(100, 100, 0xFB60);
 }
 
-function writeCommand(int data) {
+void loop() {
+  
+}
+
+void writeCommand(int data) {
   digitalWrite(dc, LOW);
 
   for (int bit=15; bit>=0; bit--) {
@@ -183,7 +187,7 @@ function writeCommand(int data) {
   digitalWrite(dc, HIGH);
 }
 
-function writeData(int data) {
+void writeData(int data) {
   for (int bit=15; bit>=0; bit--) {
     digitalWrite(mosi, bitRead(data, bit));
     digitalWrite(clock, HIGH);
@@ -191,7 +195,7 @@ function writeData(int data) {
   }
 }
 
-function drawPixel(int x, int y, int color) {
+void drawPixel(int x, int y, int color) {
   digitalWrite(cs, LOW);
 
   // Column address set.
@@ -210,3 +214,4 @@ function drawPixel(int x, int y, int color) {
 
   digitalWrite(cs, HIGH);
 }
+
