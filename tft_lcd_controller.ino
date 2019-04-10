@@ -19,12 +19,14 @@ void setup() {
 void loop() {
   drawPixel(0x00A0, 0x00FF, 0xFB60);
   drawPixel(0x000A, 0x000A, 0xFF00);
+
+  delay(5000);
 }
 
 void writeCommand(uint8_t data) {
   digitalWrite(dc, LOW);
-  
-  for (int bit=7; bit>=0; bit--) {  
+
+  for (int bit=7; bit>=0; bit--) {
     digitalWrite(mosi, bitRead(data, bit));
     digitalWrite(clk, HIGH);
     digitalWrite(clk, LOW);
@@ -70,18 +72,19 @@ void drawPixel(uint16_t x, uint16_t y, uint16_t color) {
 }
 
 void initDisplay() {
-  digitalWrite(cs, LOW);
-  
   digitalWrite(dc, HIGH);
-  digitalWrite(cs, HIGH);
   digitalWrite(mosi, LOW);
   digitalWrite(clk, LOW);
 
-  digitalWrite(reset, HIGH);
-  digitalWrite(reset, LOW);
-  digitalWrite(reset, HIGH);
+  digitalWrite(cs, LOW);
+  delay(100);
 
-  delay(150);
+  digitalWrite(reset, HIGH);
+  delay(100);
+  digitalWrite(reset, LOW);
+  delay(100);
+  digitalWrite(reset, HIGH);
+  delay(200);
 
   // 0xEF, 3, 0x03, 0x80, 0x02,
   writeCommand(0xEF);
@@ -220,8 +223,6 @@ void initDisplay() {
   delay(150);
 
   // 0x00                                   // End of list
-  writeCommand(0x00);
 
   digitalWrite(cs, HIGH);
 }
-
