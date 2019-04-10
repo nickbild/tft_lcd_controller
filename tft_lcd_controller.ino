@@ -1,30 +1,87 @@
-int dc = 1;
-int cs = 2;
-int mosi = 3;
-int clock = 4;
-int reset = 5;
+int dc = 2;
+int cs = 3;
+int mosi = 4;
+int clk = 5;
+int reset = 6;
 
 void setup() {
   pinMode(dc, OUTPUT);
   pinMode(cs, OUTPUT);
   pinMode(mosi, OUTPUT);
-  pinMode(clock, OUTPUT);
+  pinMode(clk, OUTPUT);
   pinMode(reset, OUTPUT);
 
-  ////
-  // Initialize display.
-  ////
+  delay(2000);
 
+  initDisplay();
+}
+
+void loop() {
+  drawPixel(0x00A0, 0x00FF, 0xFB60);
+  drawPixel(0x000A, 0x000A, 0xFF00);
+}
+
+void writeCommand(uint8_t data) {
+  digitalWrite(dc, LOW);
+  
+  for (int bit=7; bit>=0; bit--) {  
+    digitalWrite(mosi, bitRead(data, bit));
+    digitalWrite(clk, HIGH);
+    digitalWrite(clk, LOW);
+  }
+
+  digitalWrite(dc, HIGH);
+}
+
+void writeData(uint8_t data) {
+  for (int bit=7; bit>=0; bit--) {
+    digitalWrite(mosi, bitRead(data, bit));
+    digitalWrite(clk, HIGH);
+    digitalWrite(clk, LOW);
+  }
+}
+
+void writeData16(uint16_t data) {
+  for (int bit=15; bit>=0; bit--) {
+    digitalWrite(mosi, bitRead(data, bit));
+    digitalWrite(clk, HIGH);
+    digitalWrite(clk, LOW);
+  }
+}
+
+void drawPixel(uint16_t x, uint16_t y, uint16_t color) {
+  digitalWrite(cs, LOW);
+
+  // Column address set.
+  writeCommand(0x2A);
+  writeData16(x);
+  writeData16(x);
+
+  // Row address set.
+  writeCommand(0x2B);
+  writeData16(y);
+  writeData16(y);
+
+  // RAM write.
+  writeCommand(0x2C);
+  writeData16(color);
+
+  digitalWrite(cs, HIGH);
+}
+
+void initDisplay() {
+  digitalWrite(cs, LOW);
+  
   digitalWrite(dc, HIGH);
   digitalWrite(cs, HIGH);
   digitalWrite(mosi, LOW);
-  digitalWrite(clock, LOW);
+  digitalWrite(clk, LOW);
 
   digitalWrite(reset, HIGH);
   digitalWrite(reset, LOW);
   digitalWrite(reset, HIGH);
 
-  digitalWrite(cs, LOW);
+  delay(150);
 
   // 0xEF, 3, 0x03, 0x80, 0x02,
   writeCommand(0xEF);
@@ -164,53 +221,6 @@ void setup() {
 
   // 0x00                                   // End of list
   writeCommand(0x00);
-
-  digitalWrite(cs, HIGH);
-
-  // Test pixel drawing.
-  drawPixel(100, 100, 0xFB60);
-}
-
-void loop() {
-  
-}
-
-void writeCommand(int data) {
-  digitalWrite(dc, LOW);
-
-  for (int bit=15; bit>=0; bit--) {
-    digitalWrite(mosi, bitRead(data, bit));
-    digitalWrite(clock, HIGH);
-    digitalWrite(clock, LOW);
-  }
-
-  digitalWrite(dc, HIGH);
-}
-
-void writeData(int data) {
-  for (int bit=15; bit>=0; bit--) {
-    digitalWrite(mosi, bitRead(data, bit));
-    digitalWrite(clock, HIGH);
-    digitalWrite(clock, LOW);
-  }
-}
-
-void drawPixel(int x, int y, int color) {
-  digitalWrite(cs, LOW);
-
-  // Column address set.
-  writeCommand(0x2A);
-  writeData(x);
-  writeData(x);
-
-  // Row address set.
-  writeCommand(0x2B);
-  writeData(y);
-  writeData(y);
-
-  // RAM write.
-  writeCommand(0x2C);
-  writeData(color);
 
   digitalWrite(cs, HIGH);
 }
