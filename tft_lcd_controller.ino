@@ -1,8 +1,8 @@
-int dc = 2;
-int cs = 3;
-int mosi = 4;
-int clk = 5;
-int reset = 6;
+int dc = 9;
+int cs = 10;
+int mosi = 11;
+int reset = 12;
+int clk = 13;
 
 void setup() {
   pinMode(dc, OUTPUT);
@@ -11,14 +11,17 @@ void setup() {
   pinMode(clk, OUTPUT);
   pinMode(reset, OUTPUT);
 
-  delay(2000);
-
   initDisplay();
 }
 
 void loop() {
-  drawPixel(0x00A0, 0x00FF, 0xFB60);
-  drawPixel(0x000A, 0x000A, 0xFF00);
+  drawPixel(100, 100, 0xFB60);
+  drawPixel(50, 50, 0x0000);
+  drawPixel(51, 50, 0x0000);
+  drawPixel(52, 50, 0x0000);
+  drawPixel(53, 50, 0x0000);
+  drawPixel(54, 50, 0x0000);
+  drawPixel(55, 50, 0x0000);
 
   delay(5000);
 }
@@ -76,15 +79,14 @@ void initDisplay() {
   digitalWrite(mosi, LOW);
   digitalWrite(clk, LOW);
 
-  digitalWrite(cs, LOW);
-  delay(100);
-
   digitalWrite(reset, HIGH);
   delay(100);
   digitalWrite(reset, LOW);
   delay(100);
   digitalWrite(reset, HIGH);
   delay(200);
+
+  digitalWrite(cs, LOW);
 
   // 0xEF, 3, 0x03, 0x80, 0x02,
   writeCommand(0xEF);
@@ -220,9 +222,9 @@ void initDisplay() {
 
   // ILI9341_DISPON  , 0x80,                // Display on
   writeCommand(0x29);
-  delay(150);
 
   // 0x00                                   // End of list
+  writeCommand(0x00);
 
   digitalWrite(cs, HIGH);
 }
