@@ -15,13 +15,17 @@ void setup() {
 }
 
 void loop() {
-  drawPixel(100, 100, 0xFB60);
-  drawPixel(50, 50, 0x0000);
-  drawPixel(51, 50, 0x0000);
-  drawPixel(52, 50, 0x0000);
-  drawPixel(53, 50, 0x0000);
-  drawPixel(54, 50, 0x0000);
-  drawPixel(55, 50, 0x0000);
+  drawSprite(50, 50, 0x0000);
+  drawSprite(51, 50, 0x0000);
+  drawSprite(52, 50, 0x0000);
+  drawSprite(50, 51, 0x0000);
+  drawSprite(51, 51, 0x0000);
+  drawSprite(52, 51, 0x0000);
+  drawSprite(50, 52, 0x0000);
+  drawSprite(51, 52, 0x0000);
+  drawSprite(52, 52, 0x0000);
+  
+  drawSprite(150, 150, 0x00FF);
 
   delay(5000);
 }
@@ -72,6 +76,30 @@ void drawPixel(uint16_t x, uint16_t y, uint16_t color) {
   writeData16(color);
 
   digitalWrite(cs, HIGH);
+}
+
+void drawSprite(uint16_t x, uint16_t y, uint16_t color) {
+  drawPixel(x, y, color);
+  drawPixel(x+1, y, color);
+  drawPixel(x+2, y, color);
+  drawPixel(x+3, y, color);
+  drawPixel(x+4, y, color);
+  drawPixel(x+5, y, color);
+  drawPixel(x+6, y, color);
+
+  drawPixel(x+6, y-2, color);
+  drawPixel(x+6, y-1, color);
+  drawPixel(x+6, y+1, color);
+  drawPixel(x+6, y+2, color);
+  
+  drawPixel(x+7, y, color);
+  drawPixel(x+8, y, color);
+  drawPixel(x+9, y, color);
+  drawPixel(x+10, y, color);
+  drawPixel(x+11, y, color);
+  drawPixel(x+12, y, color);
+  drawPixel(x+13, y, color);
+  drawPixel(x+14, y, color);
 }
 
 void initDisplay() {
