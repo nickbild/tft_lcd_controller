@@ -1,12 +1,10 @@
 int dc = 9;
-int cs = 10;
 int mosi = 11;
 int reset = 12;
 int clk = 13;
 
 void setup() {
   pinMode(dc, OUTPUT);
-  pinMode(cs, OUTPUT);
   pinMode(mosi, OUTPUT);
   pinMode(clk, OUTPUT);
   pinMode(reset, OUTPUT);
@@ -59,8 +57,6 @@ void writeData16(uint16_t data) {
 }
 
 void drawPixel(uint16_t x, uint16_t y, uint16_t color) {
-  digitalWrite(cs, LOW);
-
   // Column address set.
   writeCommand(0x2A);
   writeData16(x);
@@ -74,8 +70,6 @@ void drawPixel(uint16_t x, uint16_t y, uint16_t color) {
   // RAM write.
   writeCommand(0x2C);
   writeData16(color);
-
-  digitalWrite(cs, HIGH);
 }
 
 void drawSprite(uint16_t x, uint16_t y, uint16_t color) {
@@ -113,8 +107,6 @@ void initDisplay() {
   delay(100);
   digitalWrite(reset, HIGH);
   delay(200);
-
-  digitalWrite(cs, LOW);
 
   // 0xEF, 3, 0x03, 0x80, 0x02,
   writeCommand(0xEF);
@@ -254,5 +246,4 @@ void initDisplay() {
   // 0x00                                   // End of list
   writeCommand(0x00);
 
-  digitalWrite(cs, HIGH);
 }
