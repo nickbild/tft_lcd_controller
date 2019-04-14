@@ -1,19 +1,62 @@
-int dc = 9;
-int mosi = 11;
-int reset = 12;
-int clk = 13;
+int data0 = 2;
+int data1 = 3;
+int data2 = 4;
+int data3 = 5;
+int data4 = 6;
+int data5 = 7;
+int data6 = 8;
+int data7 = 9;
+
+int dc = 10; // This clocks flip flop. Reads data0 for value. Set LOW to send high edge to FF.
+int cs = 11; // This clocks flip flop. Reads data0 for value. Set LOW to send high edge to FF.
+int clk = 12; // Set LOW to give a high edge.
+int srld = 13; // Set LOW to read data into SR.
+int clk_lcd_only = A0; // Set LOW to give a high edge.
 
 void setup() {
   pinMode(dc, OUTPUT);
-  pinMode(mosi, OUTPUT);
+  pinMode(cs, OUTPUT);
   pinMode(clk, OUTPUT);
-  pinMode(reset, OUTPUT);
+  pinMode(clk_lcd_only, OUTPUT);
+  pinMode(srld, OUTPUT);
+
+  pinMode(data0, OUTPUT);
+  pinMode(data1, OUTPUT);
+  pinMode(data2, OUTPUT);
+  pinMode(data3, OUTPUT);
+  pinMode(data4, OUTPUT);
+  pinMode(data5, OUTPUT);
+  pinMode(data6, OUTPUT);
+  pinMode(data7, OUTPUT);
+
+  Serial.begin(9600);
 
   initDisplay();
 }
 
+void loop_test() {
+  pinMode(A5, INPUT);
+  
+  digitalWrite(clk_lcd_only, LOW);
+
+  Serial.println("DC low");
+
+  delay(2000);
+
+  digitalWrite(clk_lcd_only, HIGH);
+
+  Serial.println("DC high");
+
+  delay(2000);
+}
+
 void loop() {
-  drawSprite(50, 50, 0x0000);
+//  setRectangle(0, 239, 0, 319);
+//  for (int i=0; i<3200; i++) {
+//    writeData16(0x0000);
+//  }
+
+  drawSprite(50, 51, 0x0102);
   drawSprite(51, 50, 0x0000);
   drawSprite(52, 50, 0x0000);
   drawSprite(50, 51, 0x0000);
@@ -22,38 +65,164 @@ void loop() {
   drawSprite(50, 52, 0x0000);
   drawSprite(51, 52, 0x0000);
   drawSprite(52, 52, 0x0000);
-  
-  drawSprite(150, 150, 0x00FF);
+//  
+//  drawSprite(150, 150, 0x00FF);
+//
+//  delay(5000);
+//
+//  setRectangle(0, 19, 0, 19);
+//  for (int i=0; i<398; i++) {
+//    writeData16(0xFF00);
+//  }
 
-  delay(5000);
+  delay(2000);
 }
 
 void writeCommand(uint8_t data) {
+  // Set DC low.
+  digitalWrite(data0, LOW);
   digitalWrite(dc, LOW);
+  digitalWrite(dc, HIGH);
 
-  for (int bit=7; bit>=0; bit--) {
-    digitalWrite(mosi, bitRead(data, bit));
-    digitalWrite(clk, HIGH);
-    digitalWrite(clk, LOW);
-  }
-
+  writeData(data);
+  
+  // Set DC high.
+  digitalWrite(data0, HIGH);
+  digitalWrite(dc, LOW);
   digitalWrite(dc, HIGH);
 }
 
 void writeData(uint8_t data) {
-  for (int bit=7; bit>=0; bit--) {
-    digitalWrite(mosi, bitRead(data, bit));
-    digitalWrite(clk, HIGH);
-    digitalWrite(clk, LOW);
-  }
+  // Read data into SR.
+  // lda #$(data) - sta $(address)
+  digitalWrite(data0, bitRead(data, 0));
+  digitalWrite(data1, bitRead(data, 1));
+  digitalWrite(data2, bitRead(data, 2));
+  digitalWrite(data3, bitRead(data, 3));
+  digitalWrite(data4, bitRead(data, 4));
+  digitalWrite(data5, bitRead(data, 5));
+  digitalWrite(data6, bitRead(data, 6));
+  digitalWrite(data7, bitRead(data, 7));
+
+  digitalWrite(srld, LOW);
+  digitalWrite(srld, HIGH);
+
+  // Hold CS low.
+  // lda #$00 - sta $(address)
+  digitalWrite(data0, LOW);
+  digitalWrite(cs, LOW);
+  digitalWrite(cs, HIGH);
+
+  // Clock data from SR to LCD.
+
+  // Get that first bit.
+  // sta $(address)
+  digitalWrite(clk_lcd_only, LOW);
+  digitalWrite(clk_lcd_only, HIGH);
+
+  // Clock SR and LCD together for remaining bits.
+  // sta $(address)
+  digitalWrite(clk, LOW);
+  digitalWrite(clk, HIGH);
+  digitalWrite(clk, LOW);
+  digitalWrite(clk, HIGH);
+  digitalWrite(clk, LOW);
+  digitalWrite(clk, HIGH);
+  digitalWrite(clk, LOW);
+  digitalWrite(clk, HIGH);
+  digitalWrite(clk, LOW);
+  digitalWrite(clk, HIGH);
+  digitalWrite(clk, LOW);
+  digitalWrite(clk, HIGH);
+  digitalWrite(clk, LOW);
+  digitalWrite(clk, HIGH);
+
+  // Hold CS high.
+  // lda #$01 - sta $(address)
+  digitalWrite(data0, HIGH);
+  digitalWrite(cs, LOW);
+  digitalWrite(cs, HIGH);
 }
 
+
+
+
+void writeDataNoCS(uint8_t data) {
+  // Read data into SR.
+  // lda #$(data) - sta $(address)
+  digitalWrite(data0, bitRead(data, 0));
+  digitalWrite(data1, bitRead(data, 1));
+  digitalWrite(data2, bitRead(data, 2));
+  digitalWrite(data3, bitRead(data, 3));
+  digitalWrite(data4, bitRead(data, 4));
+  digitalWrite(data5, bitRead(data, 5));
+  digitalWrite(data6, bitRead(data, 6));
+  digitalWrite(data7, bitRead(data, 7));
+
+  digitalWrite(srld, LOW);
+  digitalWrite(srld, HIGH);
+
+  // Clock data from SR to LCD.
+
+  // Get that first bit.
+  // sta $(address)
+  digitalWrite(clk_lcd_only, LOW);
+  digitalWrite(clk_lcd_only, HIGH);
+
+  // Clock SR and LCD together for remaining bits.
+  // sta $(address)
+  digitalWrite(clk, LOW);
+  digitalWrite(clk, HIGH);
+  digitalWrite(clk, LOW);
+  digitalWrite(clk, HIGH);
+  digitalWrite(clk, LOW);
+  digitalWrite(clk, HIGH);
+  digitalWrite(clk, LOW);
+  digitalWrite(clk, HIGH);
+  digitalWrite(clk, LOW);
+  digitalWrite(clk, HIGH);
+  digitalWrite(clk, LOW);
+  digitalWrite(clk, HIGH);
+  digitalWrite(clk, LOW);
+  digitalWrite(clk, HIGH);
+}
+
+
+
+
+
+
 void writeData16(uint16_t data) {
-  for (int bit=15; bit>=0; bit--) {
-    digitalWrite(mosi, bitRead(data, bit));
-    digitalWrite(clk, HIGH);
-    digitalWrite(clk, LOW);
+  // Hold CS low.
+  // lda #$00 - sta $(address)
+  digitalWrite(data0, LOW);
+  digitalWrite(cs, LOW);
+  digitalWrite(cs, HIGH);
+  
+  String highBits = "";
+  for (int bit=15; bit>=8; bit--) {
+    highBits += bitRead(data, bit);
   }
+  uint8_t highBits_i = strtol( highBits.c_str(), NULL, 2 );
+
+//  writeDataNoCS(highBits_i);
+  writeData(highBits_i);
+
+  String lowBits = "";
+  for (int bit=7; bit>=0; bit--) {
+    lowBits += bitRead(data, bit);
+  }
+  uint8_t lowBits_i = strtol( lowBits.c_str(), NULL, 2 );
+  
+//  writeDataNoCS(lowBits_i);
+  writeData(lowBits_i);
+
+  // Hold CS high.
+  // lda #$01 - sta $(address)
+  digitalWrite(data0, HIGH);
+  digitalWrite(cs, LOW);
+  digitalWrite(cs, HIGH);
+  
 }
 
 void drawPixel(uint16_t x, uint16_t y, uint16_t color) {
@@ -70,6 +239,22 @@ void drawPixel(uint16_t x, uint16_t y, uint16_t color) {
   // RAM write.
   writeCommand(0x2C);
   writeData16(color);
+}
+
+
+void setRectangle(uint16_t x1, uint16_t x2, uint16_t y1, uint16_t y2) {
+  // Column address set.
+  writeCommand(0x2A);
+  writeData16(x1);
+  writeData16(x2);
+
+  // Row address set.
+  writeCommand(0x2B);
+  writeData16(y1);
+  writeData16(y2);
+
+  // RAM write.
+  writeCommand(0x2C);
 }
 
 void drawSprite(uint16_t x, uint16_t y, uint16_t color) {
@@ -97,16 +282,28 @@ void drawSprite(uint16_t x, uint16_t y, uint16_t color) {
 }
 
 void initDisplay() {
+  // Default states -- addresses not selected.
   digitalWrite(dc, HIGH);
-  digitalWrite(mosi, LOW);
-  digitalWrite(clk, LOW);
+  digitalWrite(clk, HIGH);
+  digitalWrite(clk_lcd_only, HIGH);
+  digitalWrite(cs, HIGH);
+  digitalWrite(srld, HIGH);
 
-  digitalWrite(reset, HIGH);
-  delay(100);
-  digitalWrite(reset, LOW);
-  delay(100);
-  digitalWrite(reset, HIGH);
-  delay(200);
+  // Set DC high.
+  digitalWrite(data0, HIGH);
+  digitalWrite(dc, LOW);
+  digitalWrite(dc, HIGH);
+  
+//  digitalWrite(reset, HIGH);
+//  delay(100);
+//  digitalWrite(reset, LOW);
+//  delay(100);
+//  digitalWrite(reset, HIGH);
+//  delay(200);
+
+  // SW Reset.
+  writeCommand(0x01);
+  delay(150);
 
   // 0xEF, 3, 0x03, 0x80, 0x02,
   writeCommand(0xEF);
