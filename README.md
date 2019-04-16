@@ -10,3 +10,7 @@ An early mockup with a microcontroller driving signals in a manner that can be r
 
 ![mockup](https://raw.githubusercontent.com/nickbild/tft_lcd_controller/master/img/20190415_204318.jpg)
 
+## About the Author
+
+https://nickbild79.firebaseapp.com/
+
