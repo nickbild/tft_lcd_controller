@@ -8,8 +8,10 @@ int data6 = 8;
 int data7 = 9;
 
 int dc = 10; // This clocks flip flop. Reads data0 for value. Set LOW to send high edge to FF.
-int cs1 = 11; // This clocks flip flop. Reads data0 for value. Set LOW to send high edge to FF.
-int clk = 12; // Set LOW to give a high edge.
+//int cs1 = 11; // This clocks flip flop. Reads data0 for value. Set LOW to send high edge to FF.
+int clk = 11;
+int cs1 = 12; // This clocks flip flop. Reads data0 for value. Set LOW to send high edge to FF.
+//int clk = 12; // Set LOW to give a high edge.
 int srld = 13; // Set LOW to read data into SR.
 int clk_lcd_only = A0; // Set LOW to give a high edge.
 int cs2 = A5; // This clocks flip flop. Reads data0 for value. Set LOW to send high edge to FF.
@@ -18,9 +20,11 @@ void setup() {
   pinMode(dc, OUTPUT);
   pinMode(cs1, OUTPUT);
   pinMode(cs2, OUTPUT);
-  pinMode(clk, OUTPUT);
+  //pinMode(clk, OUTPUT);
   pinMode(clk_lcd_only, OUTPUT);
   pinMode(srld, OUTPUT);
+
+  pinMode(clk, OUTPUT);
 
   pinMode(data0, OUTPUT);
   pinMode(data1, OUTPUT);
@@ -30,6 +34,8 @@ void setup() {
   pinMode(data5, OUTPUT);
   pinMode(data6, OUTPUT);
   pinMode(data7, OUTPUT);
+
+  //analogWrite(pwm, 127);
 
   initDisplay(cs1);
   initDisplay(cs2);
@@ -86,7 +92,23 @@ void writeData(uint8_t data, int cs) {
 
   // Clock SR and LCD together for remaining bits.
   // sta $(address)
-  digitalWrite(clk, LOW);
+//  digitalWrite(clk, LOW);
+//  digitalWrite(clk, HIGH);
+//  digitalWrite(clk, LOW);
+//  digitalWrite(clk, HIGH);
+//  digitalWrite(clk, LOW);
+//  digitalWrite(clk, HIGH);
+//  digitalWrite(clk, LOW);
+//  digitalWrite(clk, HIGH);
+//  digitalWrite(clk, LOW);
+//  digitalWrite(clk, HIGH);
+//  digitalWrite(clk, LOW);
+//  digitalWrite(clk, HIGH);
+//  digitalWrite(clk, LOW);
+//  digitalWrite(clk, HIGH);
+
+
+  // DIRECT SIGNAL
   digitalWrite(clk, HIGH);
   digitalWrite(clk, LOW);
   digitalWrite(clk, HIGH);
@@ -100,6 +122,7 @@ void writeData(uint8_t data, int cs) {
   digitalWrite(clk, HIGH);
   digitalWrite(clk, LOW);
   digitalWrite(clk, HIGH);
+  digitalWrite(clk, LOW);
 
   // Hold CS high.
   // lda #$01 - sta $(address)
@@ -228,7 +251,9 @@ void drawBackground(int cs) {
 void initDisplay(int cs) {
   // Default states -- addresses not selected.
   digitalWrite(dc, HIGH);
-  digitalWrite(clk, HIGH);
+//  digitalWrite(clk, HIGH);
+  digitalWrite(clk, LOW);
+  
   digitalWrite(clk_lcd_only, HIGH);
   digitalWrite(cs, HIGH);
   digitalWrite(srld, HIGH);
