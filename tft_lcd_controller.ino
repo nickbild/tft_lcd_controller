@@ -35,7 +35,7 @@ void setup() {
   pinMode(data6, OUTPUT);
   pinMode(data7, OUTPUT);
 
-  //analogWrite(pwm, 127);
+  analogWrite(clk, 127);
 
   initDisplay(cs1);
   initDisplay(cs2);
@@ -107,22 +107,23 @@ void writeData(uint8_t data, int cs) {
 //  digitalWrite(clk, LOW);
 //  digitalWrite(clk, HIGH);
 
-
   // DIRECT SIGNAL
-  digitalWrite(clk, HIGH);
-  digitalWrite(clk, LOW);
-  digitalWrite(clk, HIGH);
-  digitalWrite(clk, LOW);
-  digitalWrite(clk, HIGH);
-  digitalWrite(clk, LOW);
-  digitalWrite(clk, HIGH);
-  digitalWrite(clk, LOW);
-  digitalWrite(clk, HIGH);
-  digitalWrite(clk, LOW);
-  digitalWrite(clk, HIGH);
-  digitalWrite(clk, LOW);
-  digitalWrite(clk, HIGH);
-  digitalWrite(clk, LOW);
+//  digitalWrite(clk, HIGH);
+//  digitalWrite(clk, LOW);
+//  digitalWrite(clk, HIGH);
+//  digitalWrite(clk, LOW);
+//  digitalWrite(clk, HIGH);
+//  digitalWrite(clk, LOW);
+//  digitalWrite(clk, HIGH);
+//  digitalWrite(clk, LOW);
+//  digitalWrite(clk, HIGH);
+//  digitalWrite(clk, LOW);
+//  digitalWrite(clk, HIGH);
+//  digitalWrite(clk, LOW);
+//  digitalWrite(clk, HIGH);
+//  digitalWrite(clk, LOW);
+
+  delay(40); // PWM is ridiculously slow -- use a real oscillator!
 
   // Hold CS high.
   // lda #$01 - sta $(address)
@@ -252,7 +253,7 @@ void initDisplay(int cs) {
   // Default states -- addresses not selected.
   digitalWrite(dc, HIGH);
 //  digitalWrite(clk, HIGH);
-  digitalWrite(clk, LOW);
+  //digitalWrite(clk, LOW);
   
   digitalWrite(clk_lcd_only, HIGH);
   digitalWrite(cs, HIGH);
