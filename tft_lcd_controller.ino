@@ -39,18 +39,17 @@ void setup() {
   digitalWrite(cs2, HIGH);
   digitalWrite(srld, HIGH);
 
-  // Set DC high.
-  digitalWrite(data0, HIGH);
-  digitalWrite(dc, LOW);
-  digitalWrite(dc, HIGH);
-
   // Disable both screens.
   digitalWrite(data0, HIGH);
   digitalWrite(cs1, LOW);
   digitalWrite(cs1, HIGH);
-  digitalWrite(data0, HIGH);
   digitalWrite(cs2, LOW);
   digitalWrite(cs2, HIGH);
+
+  // Set DC high.
+  digitalWrite(data0, HIGH);
+  digitalWrite(dc, LOW);
+  digitalWrite(dc, HIGH);
 
   // HW reset.
   //  digitalWrite(reset, HIGH);
