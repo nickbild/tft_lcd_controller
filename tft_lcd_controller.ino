@@ -7,25 +7,14 @@ int data5 = 7;
 int data6 = 8;
 int data7 = 9;
 
-int dc = 10; // This clocks flip flop. Reads data0 for value. Set LOW to send high edge to FF.
-//int cs1 = 11; // This clocks flip flop. Reads data0 for value. Set LOW to send high edge to FF.
-int clk = 11;
-int cs1 = 12; // This clocks flip flop. Reads data0 for value. Set LOW to send high edge to FF.
-//int clk = 12; // Set LOW to give a high edge.
-int srld = 13; // Set LOW to read data into SR.
-int clk_lcd_only = A0; // Set LOW to give a high edge.
-int cs2 = A5; // This clocks flip flop. Reads data0 for value. Set LOW to send high edge to FF.
+int dc = 10;            // This clocks flip flop. Reads data0 for value. Set LOW to send high edge to FF.
+int clk = 11;           // Set LOW to give a high edge.
+int clk_lcd_only = A0;  // Set LOW to give a high edge.
+int cs1 = 12;           // This clocks flip flop. Reads data0 for value. Set LOW to send high edge to FF.
+int cs2 = A5;           // This clocks flip flop. Reads data0 for value. Set LOW to send high edge to FF.
+int srld = 13;          // Set LOW to read data into SR.
 
 void setup() {
-  pinMode(dc, OUTPUT);
-  pinMode(cs1, OUTPUT);
-  pinMode(cs2, OUTPUT);
-  //pinMode(clk, OUTPUT);
-  pinMode(clk_lcd_only, OUTPUT);
-  pinMode(srld, OUTPUT);
-
-  pinMode(clk, OUTPUT);
-
   pinMode(data0, OUTPUT);
   pinMode(data1, OUTPUT);
   pinMode(data2, OUTPUT);
@@ -35,7 +24,41 @@ void setup() {
   pinMode(data6, OUTPUT);
   pinMode(data7, OUTPUT);
 
-  analogWrite(clk, 127);
+  pinMode(dc, OUTPUT);
+  pinMode(clk, OUTPUT);
+  pinMode(clk_lcd_only, OUTPUT);
+  pinMode(cs1, OUTPUT);
+  pinMode(cs2, OUTPUT);
+  pinMode(srld, OUTPUT);
+
+  // Default states -- addresses not selected.
+  digitalWrite(dc, HIGH);
+  digitalWrite(clk, HIGH);
+  digitalWrite(clk_lcd_only, HIGH);
+  digitalWrite(cs1, HIGH);
+  digitalWrite(cs2, HIGH);
+  digitalWrite(srld, HIGH);
+
+  // Set DC high.
+  digitalWrite(data0, HIGH);
+  digitalWrite(dc, LOW);
+  digitalWrite(dc, HIGH);
+
+  // Disable both screens.
+  digitalWrite(data0, HIGH);
+  digitalWrite(cs1, LOW);
+  digitalWrite(cs1, HIGH);
+  digitalWrite(data0, HIGH);
+  digitalWrite(cs2, LOW);
+  digitalWrite(cs2, HIGH);
+
+  // HW reset.
+  //  digitalWrite(reset, HIGH);
+  //  delay(100);
+  //  digitalWrite(reset, LOW);
+  //  delay(100);
+  //  digitalWrite(reset, HIGH);
+  //  delay(200);
 
   initDisplay(cs1);
   initDisplay(cs2);
@@ -55,7 +78,7 @@ void writeCommand(uint8_t data, int cs) {
   digitalWrite(dc, HIGH);
 
   writeData(data, cs);
-  
+
   // Set DC high.
   digitalWrite(data0, HIGH);
   digitalWrite(dc, LOW);
@@ -92,38 +115,20 @@ void writeData(uint8_t data, int cs) {
 
   // Clock SR and LCD together for remaining bits.
   // sta $(address)
-//  digitalWrite(clk, LOW);
-//  digitalWrite(clk, HIGH);
-//  digitalWrite(clk, LOW);
-//  digitalWrite(clk, HIGH);
-//  digitalWrite(clk, LOW);
-//  digitalWrite(clk, HIGH);
-//  digitalWrite(clk, LOW);
-//  digitalWrite(clk, HIGH);
-//  digitalWrite(clk, LOW);
-//  digitalWrite(clk, HIGH);
-//  digitalWrite(clk, LOW);
-//  digitalWrite(clk, HIGH);
-//  digitalWrite(clk, LOW);
-//  digitalWrite(clk, HIGH);
-
-  // DIRECT SIGNAL
-//  digitalWrite(clk, HIGH);
-//  digitalWrite(clk, LOW);
-//  digitalWrite(clk, HIGH);
-//  digitalWrite(clk, LOW);
-//  digitalWrite(clk, HIGH);
-//  digitalWrite(clk, LOW);
-//  digitalWrite(clk, HIGH);
-//  digitalWrite(clk, LOW);
-//  digitalWrite(clk, HIGH);
-//  digitalWrite(clk, LOW);
-//  digitalWrite(clk, HIGH);
-//  digitalWrite(clk, LOW);
-//  digitalWrite(clk, HIGH);
-//  digitalWrite(clk, LOW);
-
-  delay(40); // PWM is ridiculously slow -- use a real oscillator!
+  digitalWrite(clk, LOW);
+  digitalWrite(clk, HIGH);
+  digitalWrite(clk, LOW);
+  digitalWrite(clk, HIGH);
+  digitalWrite(clk, LOW);
+  digitalWrite(clk, HIGH);
+  digitalWrite(clk, LOW);
+  digitalWrite(clk, HIGH);
+  digitalWrite(clk, LOW);
+  digitalWrite(clk, HIGH);
+  digitalWrite(clk, LOW);
+  digitalWrite(clk, HIGH);
+  digitalWrite(clk, LOW);
+  digitalWrite(clk, HIGH);
 
   // Hold CS high.
   // lda #$01 - sta $(address)
@@ -146,7 +151,7 @@ void writeData16(uint16_t data, int cs) {
     lowBits += bitRead(data, bit);
   }
   uint8_t lowBits_i = strtol( lowBits.c_str(), NULL, 2 );
-  
+
   writeData(lowBits_i, cs);
 }
 
@@ -246,31 +251,10 @@ void drawBackground(int cs) {
   drawPixel(42, 30, 0xFFFF, cs);
   drawPixel(154, 20, 0xFFFF, cs);
   drawPixel(222, 10, 0xFFFF, cs);
-  
+
 }
 
 void initDisplay(int cs) {
-  // Default states -- addresses not selected.
-  digitalWrite(dc, HIGH);
-//  digitalWrite(clk, HIGH);
-  //digitalWrite(clk, LOW);
-  
-  digitalWrite(clk_lcd_only, HIGH);
-  digitalWrite(cs, HIGH);
-  digitalWrite(srld, HIGH);
-
-  // Set DC high.
-  digitalWrite(data0, HIGH);
-  digitalWrite(dc, LOW);
-  digitalWrite(dc, HIGH);
-  
-//  digitalWrite(reset, HIGH);
-//  delay(100);
-//  digitalWrite(reset, LOW);
-//  delay(100);
-//  digitalWrite(reset, HIGH);
-//  delay(200);
-
   // SW Reset.
   writeCommand(0x01, cs);
   delay(150);
@@ -414,4 +398,3 @@ void initDisplay(int cs) {
   writeCommand(0x00, cs);
 
 }
-
