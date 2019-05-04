@@ -13,6 +13,7 @@ int clk_lcd_only = A0;  // Set LOW to give a high edge.
 int cs1 = 12;           // This clocks flip flop. Reads data0 for value. Set LOW to send high edge to FF.
 int cs2 = A5;           // This clocks flip flop. Reads data0 for value. Set LOW to send high edge to FF.
 int srld = 13;          // Set LOW to read data into SR.
+int reset = A4;
 
 void setup() {
   pinMode(data0, OUTPUT);
@@ -30,6 +31,7 @@ void setup() {
   pinMode(cs1, OUTPUT);
   pinMode(cs2, OUTPUT);
   pinMode(srld, OUTPUT);
+  pinMode(reset, OUTPUT);
 
   // Default states -- addresses not selected.
   digitalWrite(dc, HIGH);
@@ -52,18 +54,18 @@ void setup() {
   digitalWrite(dc, HIGH);
 
   // HW reset.
-  //  digitalWrite(reset, HIGH);
-  //  delay(100);
-  //  digitalWrite(reset, LOW);
-  //  delay(100);
-  //  digitalWrite(reset, HIGH);
-  //  delay(200);
+  digitalWrite(reset, HIGH);
+  delay(100);
+  digitalWrite(reset, LOW);
+  delay(100);
+  digitalWrite(reset, HIGH);
+  delay(200);
 
   initDisplay(cs1);
   initDisplay(cs2);
 }
 
-void loop() {
+void loop() {  
   drawBackground(cs1);
   drawBackground(cs2);
 
@@ -128,6 +130,23 @@ void writeData(uint8_t data, int cs) {
   digitalWrite(clk, HIGH);
   digitalWrite(clk, LOW);
   digitalWrite(clk, HIGH);
+
+//  digitalWrite(clk, HIGH);
+//  digitalWrite(clk, LOW);
+//  digitalWrite(clk, HIGH);
+//  digitalWrite(clk, LOW);
+//  digitalWrite(clk, HIGH);
+//  digitalWrite(clk, LOW);
+//  digitalWrite(clk, HIGH);
+//  digitalWrite(clk, LOW);
+//  digitalWrite(clk, HIGH);
+//  digitalWrite(clk, LOW);
+//  digitalWrite(clk, HIGH);
+//  digitalWrite(clk, LOW);
+//  digitalWrite(clk, HIGH);
+//  digitalWrite(clk, LOW);
+
+//  delay(25);
 
   // Hold CS high.
   // lda #$01 - sta $(address)
