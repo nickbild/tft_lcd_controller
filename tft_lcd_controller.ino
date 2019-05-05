@@ -7,13 +7,22 @@ int data5 = 7;
 int data6 = 8;
 int data7 = 9;
 
-int dc = 10;            // This clocks flip flop. Reads data0 for value. Set LOW to send high edge to FF.
-int clk = 11;           // Set LOW to give a high edge.
-int clk_lcd_only = A0;  // Set LOW to give a high edge.
-int cs1 = 12;           // This clocks flip flop. Reads data0 for value. Set LOW to send high edge to FF.
-int cs2 = A5;           // This clocks flip flop. Reads data0 for value. Set LOW to send high edge to FF.
-int srld = 13;          // Set LOW to read data into SR.
-int reset = A4;
+//int dc = 10;            // This clocks flip flop. Reads data0 for value. Set LOW to send high edge to FF.
+//int clk = 11;           // Set LOW to give a high edge.
+//int clk_lcd_only = A0;  // Set LOW to give a high edge.
+//int cs1 = 12;           // This clocks flip flop. Reads data0 for value. Set LOW to send high edge to FF.
+//int cs2 = A5;           // This clocks flip flop. Reads data0 for value. Set LOW to send high edge to FF.
+//int srld = 13;          // Set LOW to read data into SR.
+//int reset = A4;
+
+int addr0 = A0;
+int addr1 = A1;
+int addr2 = A2;
+int addr3 = A3;
+int addr4 = 10;
+int addr5 = 11;
+int addr6 = 12;
+int addr7 = 13;
 
 void setup() {
   pinMode(data0, OUTPUT);
@@ -25,49 +34,68 @@ void setup() {
   pinMode(data6, OUTPUT);
   pinMode(data7, OUTPUT);
 
-  pinMode(dc, OUTPUT);
-  pinMode(clk, OUTPUT);
-  pinMode(clk_lcd_only, OUTPUT);
-  pinMode(cs1, OUTPUT);
-  pinMode(cs2, OUTPUT);
-  pinMode(srld, OUTPUT);
-  pinMode(reset, OUTPUT);
+  pinMode(addr0, OUTPUT);
+  pinMode(addr1, OUTPUT);
+  pinMode(addr2, OUTPUT);
+  pinMode(addr3, OUTPUT);
+  pinMode(addr4, OUTPUT);
+  pinMode(addr5, OUTPUT);
+  pinMode(addr6, OUTPUT);
+  pinMode(addr7, OUTPUT);
+
+  // Not used in test.
+  digitalWrite(addr4, LOW);
+  digitalWrite(addr5, LOW);
+  digitalWrite(addr6, LOW);
+  digitalWrite(addr7, LOW);
 
   // Default states -- addresses not selected.
-  digitalWrite(dc, HIGH);
-  digitalWrite(clk, HIGH);
-  digitalWrite(clk_lcd_only, HIGH);
-  digitalWrite(cs1, HIGH);
-  digitalWrite(cs2, HIGH);
-  digitalWrite(srld, HIGH);
+//  digitalWrite(dc, HIGH);
+//  digitalWrite(clk, HIGH);
+//  digitalWrite(clk_lcd_only, HIGH);
+//  digitalWrite(cs1, HIGH);
+//  digitalWrite(cs2, HIGH);
+//  digitalWrite(srld, HIGH);
+
+  PORTC = B00000000; // nothing
 
   // Disable both screens.
   digitalWrite(data0, HIGH);
-  digitalWrite(cs1, LOW);
-  digitalWrite(cs1, HIGH);
-  digitalWrite(cs2, LOW);
-  digitalWrite(cs2, HIGH);
+//  digitalWrite(cs1, LOW);
+//  digitalWrite(cs1, HIGH);
+//  digitalWrite(cs2, LOW);
+//  digitalWrite(cs2, HIGH);
+
+  PORTC = B00000111; // cs1
+  PORTC = B00000000; // nothing
+  PORTC = B00001000; // cs2
+  PORTC = B00000000; // nothing
 
   // Set DC high.
   digitalWrite(data0, HIGH);
-  digitalWrite(dc, LOW);
-  digitalWrite(dc, HIGH);
+//  digitalWrite(dc, LOW);
+//  digitalWrite(dc, HIGH);
+  PORTC = B00000100; // dc
+  PORTC = B00000000; // nothing
 
   // HW reset.
-  digitalWrite(reset, HIGH);
+//  digitalWrite(reset, HIGH);
+  PORTC = B00000000; // nothing
   delay(100);
-  digitalWrite(reset, LOW);
+//  digitalWrite(reset, LOW);
+  PORTC = B00001010; // reset
   delay(100);
-  digitalWrite(reset, HIGH);
+//  digitalWrite(reset, HIGH);
+  PORTC = B00000000; // nothing
   delay(200);
 
-  initDisplay(cs1);
-  initDisplay(cs2);
+  initDisplay(1);
+  initDisplay(2);
 }
 
 void loop() {  
-  drawBackground(cs1);
-  drawBackground(cs2);
+  drawBackground(1);
+  drawBackground(2);
 
   delay(2000);
 }
@@ -75,15 +103,19 @@ void loop() {
 void writeCommand(uint8_t data, int cs) {
   // Set DC low.
   digitalWrite(data0, LOW);
-  digitalWrite(dc, LOW);
-  digitalWrite(dc, HIGH);
+//  digitalWrite(dc, LOW);
+//  digitalWrite(dc, HIGH);
+  PORTC = B00000100; // dc
+  PORTC = B00000000; // nothing
 
   writeData(data, cs);
 
   // Set DC high.
   digitalWrite(data0, HIGH);
-  digitalWrite(dc, LOW);
-  digitalWrite(dc, HIGH);
+//  digitalWrite(dc, LOW);
+//  digitalWrite(dc, HIGH);
+  PORTC = B00000100; // dc
+  PORTC = B00000000; // nothing
 }
 
 void writeData(uint8_t data, int cs) {
@@ -98,38 +130,80 @@ void writeData(uint8_t data, int cs) {
   digitalWrite(data6, bitRead(data, 6));
   digitalWrite(data7, bitRead(data, 7));
 
-  digitalWrite(srld, LOW);
-  digitalWrite(srld, HIGH);
+//  digitalWrite(srld, LOW);
+//  digitalWrite(srld, HIGH);
+  PORTC = B00001001; // srld
+  PORTC = B00000000; // nothing
 
   // Hold CS low.
   // lda #$00 - sta $(address)
   digitalWrite(data0, LOW);
-  digitalWrite(cs, LOW);
-  digitalWrite(cs, HIGH);
+  
+  //digitalWrite(cs, LOW);
+  //digitalWrite(cs, HIGH);
+  if (cs == 1) {
+    PORTC = B00000111; // cs1
+  } else {
+    PORTC = B00001000; // cs2
+  }
+  PORTC = B00000000; // nothing
 
   // Clock data from SR to LCD.
 
   // Get that first bit.
   // sta $(address)
-  digitalWrite(clk_lcd_only, LOW);
-  digitalWrite(clk_lcd_only, HIGH);
+//  digitalWrite(clk_lcd_only, LOW);
+//  digitalWrite(clk_lcd_only, HIGH);
+  PORTC = B00000110; // clk_lcd
+  delayMicroseconds(2);
+  PORTC = B00000000; // nothing
+  delayMicroseconds(2);
 
   // Clock SR and LCD together for remaining bits.
   // sta $(address)
-  digitalWrite(clk, LOW);
-  digitalWrite(clk, HIGH);
-  digitalWrite(clk, LOW);
-  digitalWrite(clk, HIGH);
-  digitalWrite(clk, LOW);
-  digitalWrite(clk, HIGH);
-  digitalWrite(clk, LOW);
-  digitalWrite(clk, HIGH);
-  digitalWrite(clk, LOW);
-  digitalWrite(clk, HIGH);
-  digitalWrite(clk, LOW);
-  digitalWrite(clk, HIGH);
-  digitalWrite(clk, LOW);
-  digitalWrite(clk, HIGH);
+//  digitalWrite(clk, LOW);
+//  digitalWrite(clk, HIGH);
+//  digitalWrite(clk, LOW);
+//  digitalWrite(clk, HIGH);
+//  digitalWrite(clk, LOW);
+//  digitalWrite(clk, HIGH);
+//  digitalWrite(clk, LOW);
+//  digitalWrite(clk, HIGH);
+//  digitalWrite(clk, LOW);
+//  digitalWrite(clk, HIGH);
+//  digitalWrite(clk, LOW);
+//  digitalWrite(clk, HIGH);
+//  digitalWrite(clk, LOW);
+//  digitalWrite(clk, HIGH);
+
+  PORTC = B00000101; // clk
+  delayMicroseconds(2);
+  PORTC = B00000000; // nothing
+  delayMicroseconds(2);
+  PORTC = B00000101; // clk
+  delayMicroseconds(2);
+  PORTC = B00000000; // nothing
+  delayMicroseconds(2);
+  PORTC = B00000101; // clk
+  delayMicroseconds(2);
+  PORTC = B00000000; // nothing
+  delayMicroseconds(2);
+  PORTC = B00000101; // clk
+  delayMicroseconds(2);
+  PORTC = B00000000; // nothing
+  delayMicroseconds(2);
+  PORTC = B00000101; // clk
+  delayMicroseconds(2);
+  PORTC = B00000000; // nothing
+  delayMicroseconds(2);
+  PORTC = B00000101; // clk
+  delayMicroseconds(2);
+  PORTC = B00000000; // nothing
+  delayMicroseconds(2);
+  PORTC = B00000101; // clk
+  delayMicroseconds(2);
+  PORTC = B00000000; // nothing - leaves clock high
+  delayMicroseconds(2);
 
 //  digitalWrite(clk, HIGH);
 //  digitalWrite(clk, LOW);
@@ -151,8 +225,15 @@ void writeData(uint8_t data, int cs) {
   // Hold CS high.
   // lda #$01 - sta $(address)
   digitalWrite(data0, HIGH);
-  digitalWrite(cs, LOW);
-  digitalWrite(cs, HIGH);
+//  digitalWrite(cs, LOW);
+//  digitalWrite(cs, HIGH);
+
+  if (cs == 1) {
+    PORTC = B00000111; // cs1
+  } else {
+    PORTC = B00001000; // cs2
+  }
+  PORTC = B00000000; // nothing
 }
 
 void writeData16(uint16_t data, int cs) {
