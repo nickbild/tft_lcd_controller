@@ -24,6 +24,8 @@ int addr5 = 11;
 int addr6 = 12;
 int addr7 = 13;
 
+uint8_t data_last = 123;
+
 void setup() {
   pinMode(data0, OUTPUT);
   pinMode(data1, OUTPUT);
@@ -122,13 +124,17 @@ void writeData(uint8_t data, int cs) {
   // Read data into SR.
   // lda #$(data) - sta $(address)
   digitalWrite(data0, bitRead(data, 0));
-  digitalWrite(data1, bitRead(data, 1));
-  digitalWrite(data2, bitRead(data, 2));
-  digitalWrite(data3, bitRead(data, 3));
-  digitalWrite(data4, bitRead(data, 4));
-  digitalWrite(data5, bitRead(data, 5));
-  digitalWrite(data6, bitRead(data, 6));
-  digitalWrite(data7, bitRead(data, 7));
+  if (data != data_last) {
+    digitalWrite(data1, bitRead(data, 1));
+    digitalWrite(data2, bitRead(data, 2));
+    digitalWrite(data3, bitRead(data, 3));
+    digitalWrite(data4, bitRead(data, 4));
+    digitalWrite(data5, bitRead(data, 5));
+    digitalWrite(data6, bitRead(data, 6));
+    digitalWrite(data7, bitRead(data, 7));
+
+    data_last = data;
+  }
 
 //  digitalWrite(srld, LOW);
 //  digitalWrite(srld, HIGH);
@@ -155,9 +161,9 @@ void writeData(uint8_t data, int cs) {
 //  digitalWrite(clk_lcd_only, LOW);
 //  digitalWrite(clk_lcd_only, HIGH);
   PORTC = B00000110; // clk_lcd
-  delayMicroseconds(2);
+  delayMicroseconds(3);
   PORTC = B00000000; // nothing
-  delayMicroseconds(2);
+  delayMicroseconds(3);
 
   // Clock SR and LCD together for remaining bits.
   // sta $(address)
@@ -177,33 +183,33 @@ void writeData(uint8_t data, int cs) {
 //  digitalWrite(clk, HIGH);
 
   PORTC = B00000101; // clk
-  delayMicroseconds(2);
+  delayMicroseconds(3);
   PORTC = B00000000; // nothing
-  delayMicroseconds(2);
+  delayMicroseconds(3);
   PORTC = B00000101; // clk
-  delayMicroseconds(2);
+  delayMicroseconds(3);
   PORTC = B00000000; // nothing
-  delayMicroseconds(2);
+  delayMicroseconds(3);
   PORTC = B00000101; // clk
-  delayMicroseconds(2);
+  delayMicroseconds(3);
   PORTC = B00000000; // nothing
-  delayMicroseconds(2);
+  delayMicroseconds(3);
   PORTC = B00000101; // clk
-  delayMicroseconds(2);
+  delayMicroseconds(3);
   PORTC = B00000000; // nothing
-  delayMicroseconds(2);
+  delayMicroseconds(3);
   PORTC = B00000101; // clk
-  delayMicroseconds(2);
+  delayMicroseconds(3);
   PORTC = B00000000; // nothing
-  delayMicroseconds(2);
+  delayMicroseconds(3);
   PORTC = B00000101; // clk
-  delayMicroseconds(2);
+  delayMicroseconds(3);
   PORTC = B00000000; // nothing
-  delayMicroseconds(2);
+  delayMicroseconds(3);
   PORTC = B00000101; // clk
-  delayMicroseconds(2);
+  delayMicroseconds(3);
   PORTC = B00000000; // nothing - leaves clock high
-  delayMicroseconds(2);
+  delayMicroseconds(3);
 
 //  digitalWrite(clk, HIGH);
 //  digitalWrite(clk, LOW);
