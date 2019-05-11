@@ -114,11 +114,10 @@ void loop() {
   PORTC = B00000111; // cs1
   PORTC = B00000000; // nothing
 
-  drawStar(10,60, 10,60);
-  drawStar(110,160, 30,70);
+  drawStar(12,60, 60,110);
+  drawStar(110,160, 90,140);
   drawStar(100,150, 100,150);
-  drawStar(190,240, 190,240);
-  //drawStar(140,190, 120,170);
+  drawStar(170,220, 190,240);
   
   digitalWrite(data0, HIGH);
   PORTC = B00001000; // cs2
@@ -128,11 +127,10 @@ void loop() {
   PORTC = B00000111; // cs1
   PORTC = B00000000; // nothing
 
-  drawStar(10,60, 10,60);
-  drawStar(110,160, 30,70);
+  drawStar(12,60, 60,110);
+  drawStar(110,160, 90,140);
   drawStar(103,153, 103,153);
-  drawStar(190,240, 190,240);
-  //drawStar(140,190, 120,170);
+  drawStar(170,220, 190,240);
 
   
   delay(1000000);
@@ -161,20 +159,20 @@ void writeData(uint8_t data, int cs) {
   // lda #$(data) - sta $(address)
   
   //digitalWrite(data0, bitRead(data, 0));
-  if (bitRead(data, 0) == 0) {
+  if (((data >> 0) & 1) == 0) {
     PORTD &= ~_BV(PD2);  // LOW
   } else {
     PORTD |= _BV(PD2);  // HIGH
   }
   
   if (data != data_last) {
-    digitalWrite(data1, bitRead(data, 1));
-    digitalWrite(data2, bitRead(data, 2));
-    digitalWrite(data3, bitRead(data, 3));
-    digitalWrite(data4, bitRead(data, 4));
-    digitalWrite(data5, bitRead(data, 5));
-    digitalWrite(data6, bitRead(data, 6));
-    digitalWrite(data7, bitRead(data, 7));
+    digitalWrite(data1, ((data >> 1) & 1));
+    digitalWrite(data2, ((data >> 2) & 1));
+    digitalWrite(data3, ((data >> 3) & 1));
+    digitalWrite(data4, ((data >> 4) & 1));
+    digitalWrite(data5, ((data >> 5) & 1));
+    digitalWrite(data6, ((data >> 6) & 1));
+    digitalWrite(data7, ((data >> 7) & 1));
 
     data_last = data;
   }
@@ -335,79 +333,125 @@ void drawPixel(uint16_t x, uint16_t y, uint16_t color, int cs) {
 }
 
 void drawBackground(int cs) {
+  // Cockpit
   setRectangle(0, 239, 0, 50, cs);
   for (int i=0; i<12240; i++) {
-    //writeData16(0x0000, cs);
+    writeData(0x94, cs);
+    writeData(0xB3, cs);
+  }
+  setRectangle(0, 10, 51, 309, cs);
+  for (int i=0; i<2849; i++) {
+    writeData(0x94, cs);
+    writeData(0xB3, cs);
+  }
+  setRectangle(229, 239, 51, 309, cs);
+  for (int i=0; i<2849; i++) {
+    writeData(0x94, cs);
+    writeData(0xB3, cs);
+  }
+  setRectangle(0, 239, 310, 319, cs);
+  for (int i=0; i<2400; i++) {
+    writeData(0x94, cs);
+    writeData(0xB3, cs);
+  }
+
+  // Buttons
+  setRectangle(10, 20, 10, 20, cs);
+  for (int i=0; i<121; i++) {
+    writeData(0xE8, cs);
+    writeData(0xE3, cs);
+  }
+  setRectangle(10, 20, 25, 35, cs);
+  for (int i=0; i<121; i++) {
+    writeData(0x0C, cs);
+    writeData(0xE2, cs);
+  }
+  setRectangle(10, 20, 40, 43, cs);
+  for (int i=0; i<33; i++) {
+    writeData(0x22, cs);
+    writeData(0x9C, cs);
+  }
+  setRectangle(225, 235, 20, 30, cs);
+  for (int i=0; i<121; i++) {
+    writeData(0xEB, cs);
+    writeData(0x62, cs);
+  }
+
+  // Yoke
+  setRectangle(99, 139, 24, 26, cs);
+  for (int i=0; i<123; i++) {
     writeData(0x00, cs);
     writeData(0x00, cs);
   }
-  setRectangle(0, 239, 51, 101, cs);
-  for (int i=0; i<12240; i++) {
-    //writeData16(0x0000, cs);
+  setRectangle(137, 139, 21, 29, cs);
+  for (int i=0; i<27; i++) {
     writeData(0x00, cs);
     writeData(0x00, cs);
   }
-  setRectangle(0, 239, 102, 153, cs);
-  for (int i=0; i<12480; i++) {
-    //writeData16(0x0000, cs);
-    writeData(0x00, cs);
-    writeData(0x00, cs);
-  }
-  setRectangle(0, 239, 154, 205, cs);
-  for (int i=0; i<12480; i++) {
-    //writeData16(0x0000, cs);
-    writeData(0x00, cs);
-    writeData(0x00, cs);
-  }
-  setRectangle(0, 239, 206, 257, cs);
-  for (int i=0; i<12480; i++) {
-    //writeData16(0x0000, cs);
-    writeData(0x00, cs);
-    writeData(0x00, cs);
-  }
-  setRectangle(0, 239, 258, 309, cs);
-  for (int i=0; i<12480; i++) {
-    //writeData16(0x0000, cs);
-    writeData(0x00, cs);
-    writeData(0x00, cs);
-  }
-  setRectangle(0, 239, 309, 319, cs);
-  for (int i=0; i<2640; i++) {
-    //writeData16(0x0000, cs);
+  setRectangle(99, 101, 21, 29, cs);
+  for (int i=0; i<27; i++) {
     writeData(0x00, cs);
     writeData(0x00, cs);
   }
 
-  drawPixel(10, 187, 0xFFFF, cs);
+  // Space
+  setRectangle(11, 228, 51, 101, cs);
+  for (int i=0; i<11118; i++) {
+    writeData(0x00, cs);
+    writeData(0x00, cs);
+  }
+  setRectangle(11, 228, 102, 152, cs);
+  for (int i=0; i<11118; i++) {
+    writeData(0x00, cs);
+    writeData(0x00, cs);
+  }
+  setRectangle(11, 228, 153, 203, cs);
+  for (int i=0; i<11118; i++) {
+    writeData(0x00, cs);
+    writeData(0x00, cs);
+  }
+  setRectangle(11, 228, 204, 254, cs);
+  for (int i=0; i<11118; i++) {
+    writeData(0x00, cs);
+    writeData(0x00, cs);
+  }
+  setRectangle(11, 228, 255, 309, cs);
+  for (int i=0; i<11990; i++) {
+    writeData(0x00, cs);
+    writeData(0x00, cs);
+  }
+
+  // Stars
+  drawPixel(12, 187, 0xFFFF, cs);
   drawPixel(20, 88, 0xFFFF, cs);
-  drawPixel(30, 32, 0xFFFF, cs);
-  drawPixel(40, 310, 0xFFFF, cs);
+  drawPixel(30, 53, 0xFFFF, cs);
+  drawPixel(40, 308, 0xFFFF, cs);
   drawPixel(50, 290, 0xFFFF, cs);
   drawPixel(60, 180, 0xFFFF, cs);
   drawPixel(70, 130, 0xFFFF, cs);
-  drawPixel(80, 30, 0xFFFF, cs);
+  drawPixel(80, 60, 0xFFFF, cs);
   drawPixel(90, 210, 0xFFFF, cs);
   drawPixel(100, 190, 0xFFFF, cs);
-  drawPixel(1110, 105, 0xFFFF, cs);
+  drawPixel(111, 105, 0xFFFF, cs);
   drawPixel(120, 89, 0xFFFF, cs);
-  drawPixel(130, 4, 0xFFFF, cs);
+  drawPixel(130, 92, 0xFFFF, cs);
   drawPixel(140, 100, 0xFFFF, cs);
   drawPixel(150, 219, 0xFFFF, cs);
   drawPixel(160, 145, 0xFFFF, cs);
-  drawPixel(170, 45, 0xFFFF, cs);
+  drawPixel(170, 55, 0xFFFF, cs);
   drawPixel(180, 286, 0xFFFF, cs);
   drawPixel(190, 300, 0xFFFF, cs);
   drawPixel(200, 200, 0xFFFF, cs);
   drawPixel(210, 100, 0xFFFF, cs);
-  drawPixel(220, 50, 0xFFFF, cs);
-  drawPixel(230, 60, 0xFFFF, cs);
+  drawPixel(220, 59, 0xFFFF, cs);
+  drawPixel(225, 60, 0xFFFF, cs);
   drawPixel(114, 80, 0xFFFF, cs);
   drawPixel(45, 70, 0xFFFF, cs);
-  drawPixel(207, 50, 0xFFFF, cs);
-  drawPixel(66, 40, 0xFFFF, cs);
-  drawPixel(42, 30, 0xFFFF, cs);
-  drawPixel(154, 20, 0xFFFF, cs);
-  drawPixel(222, 10, 0xFFFF, cs);
+  drawPixel(207, 52, 0xFFFF, cs);
+  drawPixel(66, 64, 0xFFFF, cs);
+  drawPixel(42, 63, 0xFFFF, cs);
+  drawPixel(154, 200, 0xFFFF, cs);
+  drawPixel(222, 108, 0xFFFF, cs);
 }
 
 void drawStar(int x1, int x2, int y1, int y2) {
