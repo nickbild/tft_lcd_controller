@@ -91,15 +91,51 @@ void setup() {
   PORTC = B00000000; // nothing
   delay(200);
 
+  digitalWrite(data0, LOW);
+  PORTC = B00000111; // cs1
+  PORTC = B00000000; // nothing
+  PORTC = B00001000; // cs2
+  PORTC = B00000000; // nothing
+  
   initDisplay(1);
-  initDisplay(2);
+//  initDisplay(2);
 }
 
-void loop() {  
+void loop() {
+  digitalWrite(data0, LOW);
+  PORTC = B00000111; // cs1
+  PORTC = B00000000; // nothing
+  PORTC = B00001000; // cs2
+  PORTC = B00000000; // nothing
+  
   drawBackground(1);
-  drawBackground(2);
 
-  delay(2000);
+  digitalWrite(data0, HIGH);
+  PORTC = B00000111; // cs1
+  PORTC = B00000000; // nothing
+
+  drawStar(10,60, 10,60);
+  drawStar(110,160, 30,70);
+  drawStar(100,150, 100,150);
+  drawStar(190,240, 190,240);
+  //drawStar(140,190, 120,170);
+  
+  digitalWrite(data0, HIGH);
+  PORTC = B00001000; // cs2
+  PORTC = B00000000; // nothing
+
+  digitalWrite(data0, LOW);
+  PORTC = B00000111; // cs1
+  PORTC = B00000000; // nothing
+
+  drawStar(10,60, 10,60);
+  drawStar(110,160, 30,70);
+  drawStar(103,153, 103,153);
+  drawStar(190,240, 190,240);
+  //drawStar(140,190, 120,170);
+
+  
+  delay(1000000);
 }
 
 void writeCommand(uint8_t data, int cs) {
@@ -123,7 +159,14 @@ void writeCommand(uint8_t data, int cs) {
 void writeData(uint8_t data, int cs) {
   // Read data into SR.
   // lda #$(data) - sta $(address)
-  digitalWrite(data0, bitRead(data, 0));
+  
+  //digitalWrite(data0, bitRead(data, 0));
+  if (bitRead(data, 0) == 0) {
+    PORTD &= ~_BV(PD2);  // LOW
+  } else {
+    PORTD |= _BV(PD2);  // HIGH
+  }
+  
   if (data != data_last) {
     digitalWrite(data1, bitRead(data, 1));
     digitalWrite(data2, bitRead(data, 2));
@@ -143,16 +186,16 @@ void writeData(uint8_t data, int cs) {
 
   // Hold CS low.
   // lda #$00 - sta $(address)
-  digitalWrite(data0, LOW);
-  
-  //digitalWrite(cs, LOW);
-  //digitalWrite(cs, HIGH);
-  if (cs == 1) {
-    PORTC = B00000111; // cs1
-  } else {
-    PORTC = B00001000; // cs2
-  }
-  PORTC = B00000000; // nothing
+//  digitalWrite(data0, LOW);
+//  
+//  //digitalWrite(cs, LOW);
+//  //digitalWrite(cs, HIGH);
+//  if (cs == 1) {
+//    PORTC = B00000111; // cs1
+//  } else {
+//    PORTC = B00001000; // cs2
+//  }
+//  PORTC = B00000000; // nothing
 
   // Clock data from SR to LCD.
 
@@ -230,16 +273,16 @@ void writeData(uint8_t data, int cs) {
 
   // Hold CS high.
   // lda #$01 - sta $(address)
-  digitalWrite(data0, HIGH);
-//  digitalWrite(cs, LOW);
-//  digitalWrite(cs, HIGH);
-
-  if (cs == 1) {
-    PORTC = B00000111; // cs1
-  } else {
-    PORTC = B00001000; // cs2
-  }
-  PORTC = B00000000; // nothing
+//  digitalWrite(data0, HIGH);
+////  digitalWrite(cs, LOW);
+////  digitalWrite(cs, HIGH);
+//
+//  if (cs == 1) {
+//    PORTC = B00000111; // cs1
+//  } else {
+//    PORTC = B00001000; // cs2
+//  }
+//  PORTC = B00000000; // nothing
 }
 
 void writeData16(uint16_t data, int cs) {
@@ -294,36 +337,45 @@ void drawPixel(uint16_t x, uint16_t y, uint16_t color, int cs) {
 void drawBackground(int cs) {
   setRectangle(0, 239, 0, 50, cs);
   for (int i=0; i<12240; i++) {
-    writeData16(0x0000, cs);
+    //writeData16(0x0000, cs);
+    writeData(0x00, cs);
+    writeData(0x00, cs);
   }
   setRectangle(0, 239, 51, 101, cs);
   for (int i=0; i<12240; i++) {
-    writeData16(0x0000, cs);
+    //writeData16(0x0000, cs);
+    writeData(0x00, cs);
+    writeData(0x00, cs);
   }
   setRectangle(0, 239, 102, 153, cs);
   for (int i=0; i<12480; i++) {
-    writeData16(0x0000, cs);
+    //writeData16(0x0000, cs);
+    writeData(0x00, cs);
+    writeData(0x00, cs);
   }
   setRectangle(0, 239, 154, 205, cs);
   for (int i=0; i<12480; i++) {
-    writeData16(0x0000, cs);
+    //writeData16(0x0000, cs);
+    writeData(0x00, cs);
+    writeData(0x00, cs);
   }
   setRectangle(0, 239, 206, 257, cs);
   for (int i=0; i<12480; i++) {
-    writeData16(0x0000, cs);
+    //writeData16(0x0000, cs);
+    writeData(0x00, cs);
+    writeData(0x00, cs);
   }
   setRectangle(0, 239, 258, 309, cs);
   for (int i=0; i<12480; i++) {
-    writeData16(0x0000, cs);
+    //writeData16(0x0000, cs);
+    writeData(0x00, cs);
+    writeData(0x00, cs);
   }
   setRectangle(0, 239, 309, 319, cs);
   for (int i=0; i<2640; i++) {
-    writeData16(0x0000, cs);
-  }
-
-  setRectangle(50, 100, 200, 250, cs);
-  for (int i=0; i<2640; i++) {
-    writeData16(0xEC00, cs);
+    //writeData16(0x0000, cs);
+    writeData(0x00, cs);
+    writeData(0x00, cs);
   }
 
   drawPixel(10, 187, 0xFFFF, cs);
@@ -356,7 +408,14 @@ void drawBackground(int cs) {
   drawPixel(42, 30, 0xFFFF, cs);
   drawPixel(154, 20, 0xFFFF, cs);
   drawPixel(222, 10, 0xFFFF, cs);
+}
 
+void drawStar(int x1, int x2, int y1, int y2) {
+  setRectangle(x1, x2, y1, y2, 1);
+  for (int i=0; i<2640; i++) {
+    writeData(0xEC, 1);
+    writeData(0x00, 1);
+  }
 }
 
 void initDisplay(int cs) {
